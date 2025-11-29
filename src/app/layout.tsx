@@ -9,7 +9,7 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
-  title: "Card Reve ✨ | AI Card Generator",
+  title: "Reve Card ✨ | AI Card Generator",
   description: "Create personalized cards with AI-generated artwork",
 };
 

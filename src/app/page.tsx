@@ -57,7 +57,7 @@ export default function Home() {
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = "card-reve.png";
+      a.download = "reve-card.png";
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
@@ -80,7 +80,7 @@ export default function Home() {
         {/* Header */}
         <div className="text-center mb-12 animate-fade-in-up">
           <h1 className="text-5xl md:text-7xl font-bold mb-4 bg-gradient-to-r from-white via-purple-200 to-pink-200 bg-clip-text text-transparent">
-            Card Reve
+            Reve Card
           </h1>
           <p className="text-gray-400 text-lg md:text-xl tracking-wide">
             AI-powered cards for every occasion
