@@ -10,6 +10,7 @@ const CATEGORY_THEMES: Record<string, string> = {
   "get-well": "healing and comfort with soothing colors, flowers, sunshine, or peaceful imagery",
   wedding: "wedding celebration with elegant romance, rings, flowers, doves, or delicate lace patterns",
   graduation: "graduation achievement with caps, diplomas, stars, or celebratory academic elements",
+  holiday: "winter holiday celebration with festive elements like snowflakes, Christmas trees, ornaments, holly, stars, or cozy seasonal imagery",
 };
 
 async function generateImagePrompt(description: string, category: string): Promise<string> {
@@ -35,15 +36,17 @@ Theme Elements: ${categoryTheme}
 Recipient Description: "${description}"
 
 Create a prompt for an AI image generator to create a PRINTABLE ${category} greeting card design. The prompt MUST specify:
+- THE CARD MUST FILL THE ENTIRE IMAGE - no borders, margins, or empty space around it. The card IS the full image.
 - A clean white or light solid background suitable for printing
-- The card should be a complete, self-contained card design with clear borders/edges
 - Include ${category}-themed decorative elements combined with the recipient's interests
 - Leave space for a personal message (either blank area or subtle lined area)
 - Include artistic style directions (e.g., watercolor illustration, hand-drawn, elegant minimalist, whimsical)
-- Portrait orientation, like a real greeting card
-- The design should look like an actual ${category} card you'd find in a store, ready to print and fold
+- Portrait orientation (3:4 aspect ratio), like a real greeting card front
+- The design should look like the front of an actual ${category} card you'd find in a store
 
-Do NOT describe: busy backgrounds, photorealistic scenes, or complex environments. Focus on the card itself as a printable product.
+IMPORTANT: The entire generated image should BE the card itself - edge to edge, no frame or border around it.
+
+Do NOT describe: borders around the card, card sitting on a surface, photorealistic scenes, or complex environments.
 
 Only respond with the image generation prompt, nothing else.`,
         },

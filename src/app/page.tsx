@@ -9,6 +9,7 @@ const CATEGORIES = [
   { id: "get-well", label: "Get Well Soon", emoji: "💐" },
   { id: "wedding", label: "Wedding", emoji: "💒" },
   { id: "graduation", label: "Graduation", emoji: "🎓" },
+  { id: "holiday", label: "Holiday", emoji: "🎄" },
 ];
 
 export default function Home() {
