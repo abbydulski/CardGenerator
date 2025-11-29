@@ -17,16 +17,20 @@ async function generateImagePrompt(description: string): Promise<string> {
       messages: [
         {
           role: "user",
-          content: `You are a creative artist designing a beautiful greeting card. Based on this description of who the card is for, create a detailed image generation prompt.
+          content: `You are a creative artist designing a beautiful greeting card that will be printed. Based on this description of who the card is for, create a detailed image generation prompt.
 
 Description: "${description}"
 
-Create a prompt for an AI image generator to create a beautiful, heartfelt greeting card design. The prompt should:
-- Describe a visually stunning card design with colors, style, and composition
-- Incorporate elements related to the person's interests/personality mentioned
-- Be warm, celebratory, and suitable for a greeting card
-- Include artistic style directions (e.g., watercolor, illustrated, whimsical, elegant)
-- Be specific but not too long (under 200 words)
+Create a prompt for an AI image generator to create a PRINTABLE greeting card design. The prompt MUST specify:
+- A clean white or light solid background suitable for printing
+- The card should be a complete, self-contained card design with clear borders/edges
+- Include decorative elements, illustrations, and/or patterns related to the person's interests
+- Leave space for a personal message (either blank area or subtle lined area)
+- Include artistic style directions (e.g., watercolor illustration, hand-drawn, elegant minimalist, whimsical)
+- Portrait orientation, like a real greeting card
+- The design should look like an actual card you'd find in a store, ready to print and fold
+
+Do NOT describe: busy backgrounds, photorealistic scenes, or complex environments. Focus on the card itself as a printable product.
 
 Only respond with the image generation prompt, nothing else.`,
         },
