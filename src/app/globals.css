@@ -5,14 +5,9 @@
 }
 
 body {
-  background: #0a0a0a;
+  background: #fffbf7;
   min-height: 100vh;
   font-family: var(--font-poppins), sans-serif;
-}
-
-@keyframes gradient-shift {
-  0%, 100% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
 }
 
 @keyframes fade-in-up {
@@ -20,30 +15,23 @@ body {
   to { opacity: 1; transform: translateY(0); }
 }
 
-@keyframes shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
-}
-
-.animate-gradient {
-  background-size: 200% 200%;
-  animation: gradient-shift 8s ease infinite;
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-6px); }
 }
 
 .animate-fade-in-up {
   animation: fade-in-up 0.6s ease-out forwards;
 }
 
-.animate-shimmer {
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
-  background-size: 200% 100%;
-  animation: shimmer 2s infinite;
+.animate-float {
+  animation: float 4s ease-in-out infinite;
 }
 
-.glass {
-  background: rgba(255, 255, 255, 0.03);
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+.card-container {
+  background: white;
+  border: 1px solid #f0e6dc;
+  box-shadow: 0 4px 24px rgba(180, 140, 100, 0.08);
 }
 
 .category-btn {
@@ -52,10 +40,26 @@ body {
 
 .category-btn:hover {
   transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(180, 140, 100, 0.15);
 }
 
 .category-btn.active {
-  background: linear-gradient(135deg, #6366f1, #ec4899);
+  background: linear-gradient(135deg, #e07850, #d4a574);
   border-color: transparent;
+  color: white;
   transform: scale(1.05);
+  box-shadow: 0 4px 16px rgba(224, 120, 80, 0.3);
+}
+
+.sketch-border {
+  position: relative;
+}
+
+.sketch-border::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border: 2px dashed #e0d5c8;
+  border-radius: inherit;
+  pointer-events: none;
 }

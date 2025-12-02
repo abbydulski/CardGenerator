@@ -29,26 +29,29 @@ async function generateImagePrompt(description: string, category: string): Promi
       messages: [
         {
           role: "user",
-          content: `You are a creative artist designing a beautiful greeting card that will be printed. Based on this description of who the card is for, create a detailed image generation prompt.
+          content: `You are designing a greeting card for print. Generate an image prompt based on:
 
-Card Type: ${category.toUpperCase()} CARD
-Theme Elements: ${categoryTheme}
-Recipient Description: "${description}"
+Card Type: ${category.toUpperCase()}
+Theme: ${categoryTheme}
+For: "${description}"
 
-Create a prompt for an AI image generator to create a PRINTABLE ${category} greeting card design. The prompt MUST specify:
-- THE CARD MUST FILL THE ENTIRE IMAGE - no borders, margins, or empty space around it. The card IS the full image.
-- A clean white or light solid background suitable for printing
-- Include ${category}-themed decorative elements combined with the recipient's interests
-- Leave space for a personal message (either blank area or subtle lined area)
-- Include artistic style directions (e.g., watercolor illustration, hand-drawn, elegant minimalist, whimsical)
-- Portrait orientation (3:4 aspect ratio), like a real greeting card front
-- The design should look like the front of an actual ${category} card you'd find in a store
+CRITICAL REQUIREMENTS:
+1. FULL BLEED: The design must extend to ALL edges of the image. NO margins. NO borders. NO frame. The image IS the card - every pixel is part of the card design.
+2. WHITE/CREAM BACKGROUND: Use a clean white or soft cream background
+3. ARTISTIC STYLE: Hand-drawn sketch aesthetic, watercolor touches, delicate line art, warm and whimsical illustration style
+4. Include ${category}-themed elements personalized for the recipient
+5. Leave an area for a handwritten message
+6. Portrait orientation - this is the FRONT of a greeting card
 
-IMPORTANT: The entire generated image should BE the card itself - edge to edge, no frame or border around it.
+DO NOT include:
+- Any border or frame around the design
+- The card shown as an object on a table/surface
+- Any mockup-style presentation
+- Margins or empty space at edges
 
-Do NOT describe: borders around the card, card sitting on a surface, photorealistic scenes, or complex environments.
+The generated image will be printed directly as the card. Design must go edge-to-edge.
 
-Only respond with the image generation prompt, nothing else.`,
+Respond with ONLY the image generation prompt.`,
         },
       ],
     }),
