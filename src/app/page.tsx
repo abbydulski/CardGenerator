@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { jsPDF } from "jspdf";
 
 const CATEGORIES = [
   { id: "birthday", label: "Birthday" },
@@ -48,7 +49,7 @@ export default function Home() {
     }
   };
 
-  const handleDownload = async () => {
+  const handleDownloadPNG = async () => {
     if (!generatedImage) return;
 
     try {
@@ -57,7 +58,7 @@ export default function Home() {
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = "reve-card.png";
+      a.download = "anycard.png";
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
@@ -67,18 +68,110 @@ export default function Home() {
     }
   };
 
+  const handleDownloadPDF = async () => {
+    if (!generatedImage) return;
+
+    try {
+      // Create a new PDF (A5 folded card - 148mm x 210mm, folds to A6)
+      const pdf = new jsPDF({
+        orientation: "landscape",
+        unit: "mm",
+        format: "a5",
+      });
+
+      const pageWidth = 210;
+      const pageHeight = 148;
+      const halfWidth = pageWidth / 2;
+
+      // Load image
+      const img = new Image();
+      img.crossOrigin = "anonymous";
+      img.src = generatedImage;
+
+      await new Promise((resolve, reject) => {
+        img.onload = resolve;
+        img.onerror = reject;
+      });
+
+      // Calculate dimensions for the front cover (right half)
+      const imgRatio = img.width / img.height;
+      const panelRatio = halfWidth / pageHeight;
+
+      let drawWidth, drawHeight, offsetX, offsetY;
+
+      if (imgRatio > panelRatio) {
+        drawWidth = halfWidth;
+        drawHeight = halfWidth / imgRatio;
+        offsetX = 0;
+        offsetY = (pageHeight - drawHeight) / 2;
+      } else {
+        drawHeight = pageHeight;
+        drawWidth = pageHeight * imgRatio;
+        offsetX = (halfWidth - drawWidth) / 2;
+        offsetY = 0;
+      }
+
+      // --- PAGE 1: OUTSIDE OF CARD ---
+      // Left half = Back of card (blank with small branding)
+      pdf.setDrawColor(230, 230, 230);
+      pdf.setLineDashPattern([2, 2], 0);
+      pdf.line(halfWidth, 0, halfWidth, pageHeight); // Fold line
+
+      // Small branding on back
+      pdf.setFontSize(8);
+      pdf.setTextColor(200, 200, 200);
+      pdf.text("made with AnyCard", 10, pageHeight - 8);
+
+      // Right half = Front cover (the artwork)
+      pdf.addImage(generatedImage, "PNG", halfWidth + offsetX, offsetY, drawWidth, drawHeight);
+
+      // --- PAGE 2: INSIDE OF CARD ---
+      pdf.addPage("a5", "landscape");
+
+      // Left half = Inside left (subtle decorative element)
+      pdf.setLineDashPattern([2, 2], 0);
+      pdf.setDrawColor(230, 230, 230);
+      pdf.line(halfWidth, 0, halfWidth, pageHeight); // Fold line
+
+      // Subtle decorative corner flourish on inside left
+      pdf.setDrawColor(245, 200, 200);
+      pdf.setLineWidth(0.3);
+      // Top left corner arc
+      pdf.line(5, 20, 5, 5);
+      pdf.line(5, 5, 20, 5);
+      // Bottom right corner arc
+      pdf.line(halfWidth - 20, pageHeight - 5, halfWidth - 5, pageHeight - 5);
+      pdf.line(halfWidth - 5, pageHeight - 5, halfWidth - 5, pageHeight - 20);
+
+      // Right half = Inside right (message area)
+      // Add subtle lines for writing
+      pdf.setDrawColor(240, 240, 240);
+      pdf.setLineDashPattern([], 0);
+      pdf.setLineWidth(0.2);
+
+      const lineStartX = halfWidth + 20;
+      const lineEndX = pageWidth - 20;
+      const startY = 50;
+      const lineSpacing = 12;
+
+      for (let i = 0; i < 6; i++) {
+        const y = startY + (i * lineSpacing);
+        pdf.line(lineStartX, y, lineEndX, y);
+      }
+
+      pdf.save("anycard.pdf");
+    } catch (err) {
+      console.error("PDF generation failed:", err);
+    }
+  };
+
   return (
     <main className="min-h-screen">
       {/* Header */}
       <header className="fixed top-0 left-0 right-0 z-50 px-8 py-6 flex justify-between items-center">
         <div className="text-2xl font-light tracking-tight text-neutral-900">
-          reve
+          Any<span className="text-rose-400">Card</span>
         </div>
-        <nav className="hidden md:flex gap-8 text-sm text-neutral-500">
-          <span className="hover:text-neutral-900 cursor-pointer transition-colors">Home</span>
-          <span className="hover:text-neutral-900 cursor-pointer transition-colors">Portfolio</span>
-          <span className="hover:text-neutral-900 cursor-pointer transition-colors">Shop</span>
-        </nav>
       </header>
 
       {/* Main Content */}
@@ -109,15 +202,15 @@ export default function Home() {
             {/* Intro */}
             <div className="mb-12 animate-fade-in">
               <div className="flex items-center gap-3 mb-4">
-                <div className="w-0 h-px bg-neutral-900 animate-line"></div>
-                <span className="text-xs tracking-[0.3em] uppercase text-neutral-400">Create</span>
+                <div className="w-0 h-px bg-rose-300 animate-line"></div>
+                <span className="text-xs tracking-[0.3em] uppercase text-rose-400">Create</span>
               </div>
               <h1 className="text-4xl md:text-5xl font-light leading-tight text-neutral-900 mb-4">
                 Art-Crafted<br />
-                <span className="italic">Greeting Cards</span>
+                <span className="italic text-rose-400">Greeting Cards</span>
               </h1>
               <p className="text-neutral-500 text-sm leading-relaxed">
-                Describe someone special, and watch as AI transforms your words into a unique, hand-sketched card design.
+                Describe someone special, and watch as AI transforms your words into a unique, hand-sketched card design. Powered by <span className="text-rose-400">Reve</span> & <span className="text-amber-500">Claude Code</span>.
               </p>
             </div>
 
@@ -157,7 +250,7 @@ export default function Home() {
                   id="description"
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
-                  placeholder="A free spirit who loves ocean sunsets, vintage cameras, and her golden retriever named Honey..."
+                  placeholder="My girlfriend who loves coffee and golden retrievers..."
                   className="art-input w-full h-32 p-0 bg-transparent border-0 border-b border-neutral-200 focus:ring-0 outline-none resize-none text-neutral-800 placeholder:text-neutral-300 text-sm leading-relaxed"
                   disabled={isLoading}
                 />
@@ -198,29 +291,49 @@ export default function Home() {
             {generatedImage && (
               <div className="lg:hidden mt-12 space-y-6 animate-fade-in">
                 <img src={generatedImage} alt="Generated card" className="w-full shadow-xl" />
-                <button
-                  onClick={handleDownload}
-                  className="flex items-center gap-2 text-neutral-600 hover:text-neutral-900 text-sm transition-colors"
-                >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                  </svg>
-                  Download artwork
-                </button>
+                <div className="flex items-center gap-4">
+                  <button
+                    onClick={handleDownloadPNG}
+                    className="flex items-center gap-2 text-neutral-600 hover:text-rose-500 text-sm transition-colors"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                    </svg>
+                    PNG
+                  </button>
+                  <button
+                    onClick={handleDownloadPDF}
+                    className="flex items-center gap-2 text-neutral-600 hover:text-rose-500 text-sm transition-colors"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                    </svg>
+                    PDF
+                  </button>
+                </div>
               </div>
             )}
 
-            {/* Desktop: Download button when image exists */}
+            {/* Desktop: Download buttons when image exists */}
             {generatedImage && (
-              <div className="hidden lg:block mt-8 animate-fade-in">
+              <div className="hidden lg:flex mt-8 gap-6 animate-fade-in">
                 <button
-                  onClick={handleDownload}
-                  className="flex items-center gap-2 text-neutral-600 hover:text-neutral-900 text-sm transition-colors"
+                  onClick={handleDownloadPNG}
+                  className="flex items-center gap-2 text-neutral-600 hover:text-rose-500 text-sm transition-colors"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                   </svg>
-                  Download artwork
+                  Download PNG
+                </button>
+                <button
+                  onClick={handleDownloadPDF}
+                  className="flex items-center gap-2 text-neutral-600 hover:text-rose-500 text-sm transition-colors"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                  </svg>
+                  Download PDF
                 </button>
               </div>
             )}
