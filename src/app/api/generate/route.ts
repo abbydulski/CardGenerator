@@ -29,29 +29,37 @@ async function generateImagePrompt(description: string, category: string): Promi
       messages: [
         {
           role: "user",
-          content: `You are designing a greeting card for print. Generate an image prompt based on:
+          content: `Generate an image prompt for an artistic, editorial-style illustration.
 
-Card Type: ${category.toUpperCase()}
-Theme: ${categoryTheme}
-For: "${description}"
+Theme: ${category.toUpperCase()} - ${categoryTheme}
+Personalized for: "${description}"
 
-CRITICAL REQUIREMENTS:
-1. FULL BLEED: The design must extend to ALL edges of the image. NO margins. NO borders. NO frame. The image IS the card - every pixel is part of the card design.
-2. WHITE/CREAM BACKGROUND: Use a clean white or soft cream background
-3. ARTISTIC STYLE: Hand-drawn sketch aesthetic, watercolor touches, delicate line art, warm and whimsical illustration style
-4. Include ${category}-themed elements personalized for the recipient
-5. Leave an area for a handwritten message
-6. Portrait orientation - this is the FRONT of a greeting card
+ARTISTIC STYLE (VERY IMPORTANT):
+- Loose, expressive brushstrokes with visible texture
+- Hand-painted, sketch-like quality with raw artistic energy
+- Bold paint splashes, ink splatters, or watercolor bleeds
+- Imperfect, organic linework that feels human-made
+- Mix of detailed focal elements with abstract painterly backgrounds
+- Editorial fashion magazine aesthetic meets fine art
 
-DO NOT include:
-- Any border or frame around the design
-- The card shown as an object on a table/surface
-- Any mockup-style presentation
-- Margins or empty space at edges
+TECHNICAL REQUIREMENTS:
+- FLAT 2D illustration filling 100% of the canvas edge-to-edge
+- NOT a card mockup, NOT 3D, NOT a photo
+- NOT angled, no shadows underneath, not floating
+- The artwork IS the entire image
 
-The generated image will be printed directly as the card. Design must go edge-to-edge.
+COLOR & TEXTURE:
+- Rich, expressive colors with visible brushwork
+- Paint texture, watercolor blooms, ink bleeds
+- Can have bold color accents (reds, golds, deep blues)
+- White/cream areas should feel painted, not sterile
 
-Respond with ONLY the image generation prompt.`,
+Combine the ${category} theme with elements from: "${description}"
+Leave compositional space for a message/greeting.
+
+CRITICAL: This should look like a page from an art book or fashion editorial - expressive, artistic, hand-crafted feeling. Not clean digital illustration.
+
+Respond with ONLY the prompt, no explanation.`,
         },
       ],
     }),

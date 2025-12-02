@@ -3,13 +3,13 @@
 import { useState } from "react";
 
 const CATEGORIES = [
-  { id: "birthday", label: "Birthday", emoji: "🎂" },
-  { id: "anniversary", label: "Anniversary", emoji: "💕" },
-  { id: "thank-you", label: "Thank You", emoji: "🙏" },
-  { id: "get-well", label: "Get Well Soon", emoji: "💐" },
-  { id: "wedding", label: "Wedding", emoji: "💒" },
-  { id: "graduation", label: "Graduation", emoji: "🎓" },
-  { id: "holiday", label: "Holiday", emoji: "🎄" },
+  { id: "birthday", label: "Birthday" },
+  { id: "anniversary", label: "Anniversary" },
+  { id: "thank-you", label: "Thank You" },
+  { id: "get-well", label: "Get Well" },
+  { id: "wedding", label: "Wedding" },
+  { id: "graduation", label: "Graduation" },
+  { id: "holiday", label: "Holiday" },
 ];
 
 export default function Home() {
@@ -68,116 +68,164 @@ export default function Home() {
   };
 
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center p-4 md:p-8">
-      {/* Background decoration */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none opacity-30">
-        <div className="absolute top-20 left-10 w-32 h-32 border-2 border-dashed border-amber-300 rounded-full animate-float" />
-        <div className="absolute bottom-32 right-20 w-24 h-24 border-2 border-dashed border-rose-300 rounded-full animate-float" style={{ animationDelay: "1s" }} />
-        <div className="absolute top-1/3 right-10 w-16 h-16 border-2 border-dashed border-orange-300 rounded-full animate-float" style={{ animationDelay: "2s" }} />
-      </div>
-
-      <div className="w-full max-w-2xl relative z-10">
-        {/* Header */}
-        <div className="text-center mb-10 animate-fade-in-up">
-          <h1 className="text-5xl md:text-6xl font-bold mb-3 text-stone-800 tracking-tight">
-            Reve Card
-          </h1>
-          <p className="text-stone-500 text-lg md:text-xl">
-            Hand-crafted AI cards for every occasion ✨
-          </p>
+    <main className="min-h-screen">
+      {/* Header */}
+      <header className="fixed top-0 left-0 right-0 z-50 px-8 py-6 flex justify-between items-center">
+        <div className="text-2xl font-light tracking-tight text-neutral-900">
+          reve
         </div>
+        <nav className="hidden md:flex gap-8 text-sm text-neutral-500">
+          <span className="hover:text-neutral-900 cursor-pointer transition-colors">Home</span>
+          <span className="hover:text-neutral-900 cursor-pointer transition-colors">Portfolio</span>
+          <span className="hover:text-neutral-900 cursor-pointer transition-colors">Shop</span>
+        </nav>
+      </header>
 
-        {/* Main Card */}
-        <div className="card-container rounded-3xl p-6 md:p-10 animate-fade-in-up" style={{ animationDelay: "0.1s" }}>
-          <form onSubmit={handleSubmit} className="space-y-8">
-            {/* Category Selection */}
-            <div>
-              <label className="block text-stone-600 font-medium mb-4 text-sm uppercase tracking-wider">
-                Select Occasion
-              </label>
-              <div className="grid grid-cols-4 md:grid-cols-7 gap-2">
-                {CATEGORIES.map((cat) => (
-                  <button
-                    key={cat.id}
-                    type="button"
-                    onClick={() => setCategory(cat.id)}
-                    className={`category-btn p-3 rounded-xl border text-center ${
-                      category === cat.id
-                        ? "active"
-                        : "bg-stone-50 border-stone-200 text-stone-600 hover:bg-stone-100"
-                    }`}
-                  >
-                    <span className="text-xl block mb-1">{cat.emoji}</span>
-                    <span className="text-[10px] font-medium leading-tight block">{cat.label}</span>
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Description Input */}
-            <div>
-              <label
-                htmlFor="description"
-                className="block text-stone-600 font-medium mb-4 text-sm uppercase tracking-wider"
-              >
-                Describe the recipient
-              </label>
-              <textarea
-                id="description"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                placeholder="e.g., My girlfriend who loves golden retrievers and sunflowers..."
-                className="w-full h-32 p-5 bg-stone-50 border border-stone-200 rounded-2xl focus:border-amber-400 focus:ring-2 focus:ring-amber-100 outline-none resize-none text-stone-700 placeholder:text-stone-400 transition-all"
-                disabled={isLoading}
+      {/* Main Content */}
+      <div className="flex min-h-screen">
+        {/* Left Side - Image */}
+        <div className="hidden lg:block w-1/2 relative">
+          {generatedImage ? (
+            <div className="absolute inset-0 p-12 flex items-center justify-center animate-fade-in">
+              <img
+                src={generatedImage}
+                alt="Generated card"
+                className="max-w-full max-h-full object-contain shadow-2xl"
               />
             </div>
-
-            <button
-              type="submit"
-              disabled={isLoading || !description.trim()}
-              className="w-full py-4 px-6 bg-gradient-to-r from-amber-500 via-orange-500 to-rose-500 text-white font-semibold text-lg rounded-2xl disabled:opacity-40 disabled:cursor-not-allowed transition-all transform hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-orange-200"
-            >
-              {isLoading ? (
-                <span className="flex items-center justify-center gap-3">
-                  <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-                  </svg>
-                  Creating your card...
-                </span>
-              ) : (
-                "Generate Card ✏️"
-              )}
-            </button>
-          </form>
-
-          {error && (
-            <div className="mt-8 p-4 bg-red-50 border border-red-200 rounded-2xl text-red-500 text-center">
-              {error}
-            </div>
-          )}
-
-          {generatedImage && (
-            <div className="mt-10 space-y-6 animate-fade-in-up">
-              <div className="sketch-border rounded-2xl overflow-hidden">
-                <img src={generatedImage} alt="Generated card" className="w-full h-auto" />
+          ) : (
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="text-center text-neutral-300 animate-fade-in">
+                <div className="text-8xl mb-4">✎</div>
+                <p className="text-sm tracking-widest uppercase">Your card will appear here</p>
               </div>
-              <button
-                onClick={handleDownload}
-                className="w-full py-4 px-6 bg-stone-100 hover:bg-stone-200 border border-stone-200 text-stone-700 font-semibold rounded-2xl transition-all transform hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-3"
-              >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                </svg>
-                Download Card
-              </button>
             </div>
           )}
         </div>
 
-        <p className="text-center text-stone-400 mt-8 text-sm">
-          Powered by Claude AI & Reve
-        </p>
+        {/* Right Side - Form */}
+        <div className="w-full lg:w-1/2 flex flex-col justify-center px-8 md:px-16 lg:px-20 py-32 bg-white/50">
+          <div className="max-w-md">
+            {/* Intro */}
+            <div className="mb-12 animate-fade-in">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-0 h-px bg-neutral-900 animate-line"></div>
+                <span className="text-xs tracking-[0.3em] uppercase text-neutral-400">Create</span>
+              </div>
+              <h1 className="text-4xl md:text-5xl font-light leading-tight text-neutral-900 mb-4">
+                Art-Crafted<br />
+                <span className="italic">Greeting Cards</span>
+              </h1>
+              <p className="text-neutral-500 text-sm leading-relaxed">
+                Describe someone special, and watch as AI transforms your words into a unique, hand-sketched card design.
+              </p>
+            </div>
+
+            <form onSubmit={handleSubmit} className="space-y-10">
+              {/* Category Selection */}
+              <div className="animate-fade-in" style={{ animationDelay: "0.1s" }}>
+                <label className="block text-xs tracking-[0.2em] uppercase text-neutral-400 mb-4">
+                  Occasion
+                </label>
+                <div className="flex flex-wrap gap-2">
+                  {CATEGORIES.map((cat) => (
+                    <button
+                      key={cat.id}
+                      type="button"
+                      onClick={() => setCategory(cat.id)}
+                      className={`category-btn px-4 py-2 text-xs tracking-wide border transition-all ${
+                        category === cat.id
+                          ? "active"
+                          : "border-neutral-200 text-neutral-500 hover:border-neutral-400"
+                      }`}
+                    >
+                      {cat.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Description Input */}
+              <div className="animate-fade-in" style={{ animationDelay: "0.2s" }}>
+                <label
+                  htmlFor="description"
+                  className="block text-xs tracking-[0.2em] uppercase text-neutral-400 mb-4"
+                >
+                  Describe the recipient
+                </label>
+                <textarea
+                  id="description"
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  placeholder="A free spirit who loves ocean sunsets, vintage cameras, and her golden retriever named Honey..."
+                  className="art-input w-full h-32 p-0 bg-transparent border-0 border-b border-neutral-200 focus:ring-0 outline-none resize-none text-neutral-800 placeholder:text-neutral-300 text-sm leading-relaxed"
+                  disabled={isLoading}
+                />
+              </div>
+
+              <button
+                type="submit"
+                disabled={isLoading || !description.trim()}
+                className="generate-btn group flex items-center gap-3 text-neutral-900 font-medium disabled:opacity-30 disabled:cursor-not-allowed transition-all py-3 animate-fade-in"
+                style={{ animationDelay: "0.3s" }}
+              >
+                {isLoading ? (
+                  <>
+                    <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" fill="none" />
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                    </svg>
+                    <span>Creating artwork...</span>
+                  </>
+                ) : (
+                  <>
+                    <span>Generate Card</span>
+                    <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                    </svg>
+                  </>
+                )}
+              </button>
+            </form>
+
+            {error && (
+              <div className="mt-8 text-red-500 text-sm animate-fade-in">
+                {error}
+              </div>
+            )}
+
+            {/* Mobile: Show generated image */}
+            {generatedImage && (
+              <div className="lg:hidden mt-12 space-y-6 animate-fade-in">
+                <img src={generatedImage} alt="Generated card" className="w-full shadow-xl" />
+                <button
+                  onClick={handleDownload}
+                  className="flex items-center gap-2 text-neutral-600 hover:text-neutral-900 text-sm transition-colors"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                  </svg>
+                  Download artwork
+                </button>
+              </div>
+            )}
+
+            {/* Desktop: Download button when image exists */}
+            {generatedImage && (
+              <div className="hidden lg:block mt-8 animate-fade-in">
+                <button
+                  onClick={handleDownload}
+                  className="flex items-center gap-2 text-neutral-600 hover:text-neutral-900 text-sm transition-colors"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                  </svg>
+                  Download artwork
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
     </main>
   );
