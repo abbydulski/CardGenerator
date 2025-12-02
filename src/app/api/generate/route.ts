@@ -44,9 +44,10 @@ ARTISTIC STYLE (VERY IMPORTANT):
 
 TECHNICAL REQUIREMENTS:
 - FLAT 2D illustration filling 100% of the canvas edge-to-edge
+- PORTRAIT orientation with 2:3 aspect ratio (like a greeting card front)
 - NOT a card mockup, NOT 3D, NOT a photo
 - NOT angled, no shadows underneath, not floating
-- The artwork IS the entire image
+- The artwork IS the entire image, ready to print
 
 COLOR & TEXTURE:
 - Rich, expressive colors with visible brushwork

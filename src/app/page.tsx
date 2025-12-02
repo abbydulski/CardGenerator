@@ -72,91 +72,59 @@ export default function Home() {
     if (!generatedImage) return;
 
     try {
-      // Create a new PDF (A5 folded card - 148mm x 210mm, folds to A6)
+      // US Letter landscape (11" x 8.5"), folds to 5.5" x 8.5" card
       const pdf = new jsPDF({
         orientation: "landscape",
-        unit: "mm",
-        format: "a5",
+        unit: "in",
+        format: "letter",
       });
 
-      const pageWidth = 210;
-      const pageHeight = 148;
-      const halfWidth = pageWidth / 2;
-
-      // Load image
-      const img = new Image();
-      img.crossOrigin = "anonymous";
-      img.src = generatedImage;
-
-      await new Promise((resolve, reject) => {
-        img.onload = resolve;
-        img.onerror = reject;
-      });
-
-      // Calculate dimensions for the front cover (right half)
-      const imgRatio = img.width / img.height;
-      const panelRatio = halfWidth / pageHeight;
-
-      let drawWidth, drawHeight, offsetX, offsetY;
-
-      if (imgRatio > panelRatio) {
-        drawWidth = halfWidth;
-        drawHeight = halfWidth / imgRatio;
-        offsetX = 0;
-        offsetY = (pageHeight - drawHeight) / 2;
-      } else {
-        drawHeight = pageHeight;
-        drawWidth = pageHeight * imgRatio;
-        offsetX = (halfWidth - drawWidth) / 2;
-        offsetY = 0;
-      }
+      const pageWidth = 11;
+      const pageHeight = 8.5;
+      const halfWidth = pageWidth / 2; // 5.5"
 
       // --- PAGE 1: OUTSIDE OF CARD ---
-      // Left half = Back of card (blank with small branding)
-      pdf.setDrawColor(230, 230, 230);
-      pdf.setLineDashPattern([2, 2], 0);
-      pdf.line(halfWidth, 0, halfWidth, pageHeight); // Fold line
+      // Dashed fold line
+      pdf.setDrawColor(220, 220, 220);
+      pdf.setLineDashPattern([0.1, 0.1], 0);
+      pdf.line(halfWidth, 0, halfWidth, pageHeight);
 
-      // Small branding on back
+      // Left half = Back of card (small branding)
       pdf.setFontSize(8);
       pdf.setTextColor(200, 200, 200);
-      pdf.text("made with AnyCard", 10, pageHeight - 8);
+      pdf.text("made with AnyCard", 0.3, pageHeight - 0.3);
 
-      // Right half = Front cover (the artwork)
-      pdf.addImage(generatedImage, "PNG", halfWidth + offsetX, offsetY, drawWidth, drawHeight);
+      // Right half = Front cover (artwork fills entire panel)
+      pdf.addImage(generatedImage, "PNG", halfWidth, 0, halfWidth, pageHeight);
 
       // --- PAGE 2: INSIDE OF CARD ---
-      pdf.addPage("a5", "landscape");
+      pdf.addPage("letter", "landscape");
 
-      // Left half = Inside left (subtle decorative element)
-      pdf.setLineDashPattern([2, 2], 0);
-      pdf.setDrawColor(230, 230, 230);
-      pdf.line(halfWidth, 0, halfWidth, pageHeight); // Fold line
+      // Fold line
+      pdf.setDrawColor(220, 220, 220);
+      pdf.setLineDashPattern([0.1, 0.1], 0);
+      pdf.line(halfWidth, 0, halfWidth, pageHeight);
 
-      // Subtle decorative corner flourish on inside left
-      pdf.setDrawColor(245, 200, 200);
-      pdf.setLineWidth(0.3);
-      // Top left corner arc
-      pdf.line(5, 20, 5, 5);
-      pdf.line(5, 5, 20, 5);
-      // Bottom right corner arc
-      pdf.line(halfWidth - 20, pageHeight - 5, halfWidth - 5, pageHeight - 5);
-      pdf.line(halfWidth - 5, pageHeight - 5, halfWidth - 5, pageHeight - 20);
-
-      // Right half = Inside right (message area)
-      // Add subtle lines for writing
-      pdf.setDrawColor(240, 240, 240);
+      // Subtle corner flourishes on inside left
+      pdf.setDrawColor(250, 220, 220);
+      pdf.setLineWidth(0.01);
       pdf.setLineDashPattern([], 0);
-      pdf.setLineWidth(0.2);
+      pdf.line(0.3, 0.6, 0.3, 0.3);
+      pdf.line(0.3, 0.3, 0.6, 0.3);
+      pdf.line(halfWidth - 0.6, pageHeight - 0.3, halfWidth - 0.3, pageHeight - 0.3);
+      pdf.line(halfWidth - 0.3, pageHeight - 0.3, halfWidth - 0.3, pageHeight - 0.6);
 
-      const lineStartX = halfWidth + 20;
-      const lineEndX = pageWidth - 20;
-      const startY = 50;
-      const lineSpacing = 12;
+      // Writing lines on inside right
+      pdf.setDrawColor(245, 245, 245);
+      pdf.setLineWidth(0.005);
 
-      for (let i = 0; i < 6; i++) {
-        const y = startY + (i * lineSpacing);
-        pdf.line(lineStartX, y, lineEndX, y);
+      const lineStartX = halfWidth + 0.75;
+      const lineEndX = pageWidth - 0.75;
+      const startY = 2;
+      const lineSpacing = 0.5;
+
+      for (let i = 0; i < 10; i++) {
+        pdf.line(lineStartX, startY + (i * lineSpacing), lineEndX, startY + (i * lineSpacing));
       }
 
       pdf.save("anycard.pdf");
