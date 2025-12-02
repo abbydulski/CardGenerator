@@ -210,7 +210,7 @@ export default function Home() {
                 <span className="italic text-rose-400">Greeting Cards</span>
               </h1>
               <p className="text-neutral-500 text-sm leading-relaxed">
-                Describe someone special, and watch as AI transforms your words into a unique, hand-sketched card design. Powered by <span className="text-rose-400">Reve</span> & <span className="text-amber-500">Claude Code</span>.
+                Describe someone special, and watch as AI transforms your words into a unique, hand-sketched card design. Powered by <span className="text-rose-400">Reve</span> & <span className="text-amber-500">Claude Code</span>. Download the PDF for a printable, foldable card!
               </p>
             </div>
 
