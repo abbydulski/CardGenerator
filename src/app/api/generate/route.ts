@@ -13,8 +13,42 @@ const CATEGORY_THEMES: Record<string, string> = {
   holiday: "winter holiday celebration with festive elements like snowflakes, Christmas trees, ornaments, holly, stars, or cozy seasonal imagery",
 };
 
-async function generateImagePrompt(description: string, category: string): Promise<string> {
+const ART_STYLE_PROMPTS: Record<string, string> = {
+  "editorial-painterly": `
+- Rich, expressive brushwork with visible strokes and texture
+- Sophisticated color palette with nuanced tonal variations
+- Editorial illustration quality suitable for magazines
+- Painterly depth with layered colors and soft edges
+- Artistic, refined aesthetic with professional polish`,
+  watercolor: `
+- Soft, flowing watercolor washes with visible paper texture
+- Delicate color bleeds and blooms where pigments meet
+- Transparent layers building depth and luminosity
+- Wet-on-wet effects with organic edges
+- Subtle granulation and pigment settling`,
+  "ink-sketch": `
+- Bold, confident ink linework with varying stroke weights
+- Cross-hatching and stippling for texture and shadow
+- Loose, gestural marks that feel spontaneous
+- High contrast between black ink and white space
+- Sketch-like quality with visible pen strokes`,
+  minimalist: `
+- Clean, simple lines with generous white space
+- Limited color palette (2-3 colors maximum)
+- Geometric shapes and elegant simplicity
+- Modern, sophisticated restraint
+- Focus on essential elements only`,
+  vintage: `
+- Muted, nostalgic color palette with sepia tones
+- Aged paper texture and subtle distressing
+- Retro typography-inspired decorative elements
+- 1920s-1950s illustration aesthetic
+- Soft vignetting and worn edges`,
+};
+
+async function generateImagePrompt(description: string, category: string, artStyle: string): Promise<string> {
   const categoryTheme = CATEGORY_THEMES[category] || CATEGORY_THEMES.birthday;
+  const stylePrompt = ART_STYLE_PROMPTS[artStyle] || ART_STYLE_PROMPTS["editorial-painterly"];
 
   const response = await fetch(CLAUDE_API_URL, {
     method: "POST",
@@ -29,18 +63,13 @@ async function generateImagePrompt(description: string, category: string): Promi
       messages: [
         {
           role: "user",
-          content: `Generate an image prompt for an artistic, editorial-style illustration.
+          content: `Generate an image prompt for an artistic greeting card illustration.
 
 Theme: ${category.toUpperCase()} - ${categoryTheme}
 Personalized for: "${description}"
 
-ARTISTIC STYLE (VERY IMPORTANT):
-- Loose, expressive brushstrokes with visible texture
-- Hand-painted, sketch-like quality with raw artistic energy
-- Bold paint splashes, ink splatters, or watercolor bleeds
-- Imperfect, organic linework that feels human-made
-- Mix of detailed focal elements with abstract painterly backgrounds
-- Editorial fashion magazine aesthetic meets fine art
+ARTISTIC STYLE (VERY IMPORTANT - ${artStyle.toUpperCase()}):
+${stylePrompt}
 
 TECHNICAL REQUIREMENTS:
 - FLAT 2D illustration filling 100% of the canvas edge-to-edge
@@ -49,16 +78,10 @@ TECHNICAL REQUIREMENTS:
 - NOT angled, no shadows underneath, not floating
 - The artwork IS the entire image, ready to print
 
-COLOR & TEXTURE:
-- Rich, expressive colors with visible brushwork
-- Paint texture, watercolor blooms, ink bleeds
-- Can have bold color accents (reds, golds, deep blues)
-- White/cream areas should feel painted, not sterile
-
-Combine the ${category} theme with elements from: "${description}"
+Combine the ${category} theme with the ${artStyle} art style and elements from: "${description}"
 Leave compositional space for a message/greeting.
 
-CRITICAL: This should look like a page from an art book or fashion editorial - expressive, artistic, hand-crafted feeling. Not clean digital illustration.
+CRITICAL: The art style must be clearly ${artStyle}. This should look like authentic ${artStyle} artwork, not generic digital illustration.
 
 Respond with ONLY the prompt, no explanation.`,
         },
@@ -113,7 +136,7 @@ async function generateImage(prompt: string): Promise<string> {
 
 export async function POST(request: NextRequest) {
   try {
-    const { description, category = "birthday" } = await request.json();
+    const { description, category = "birthday", artStyle = "editorial-painterly" } = await request.json();
 
     if (!description || typeof description !== "string") {
       return NextResponse.json(
@@ -138,7 +161,7 @@ export async function POST(request: NextRequest) {
 
     // Step 1: Generate creative prompt with Claude
     console.log("Generating prompt with Claude...");
-    const imagePrompt = await generateImagePrompt(description, category);
+    const imagePrompt = await generateImagePrompt(description, category, artStyle);
     console.log("Generated prompt:", imagePrompt);
 
     // Step 2: Generate image with Reve

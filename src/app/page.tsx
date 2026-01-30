@@ -13,9 +13,18 @@ const CATEGORIES = [
   { id: "holiday", label: "Holiday" },
 ];
 
+const ART_STYLES = [
+  { id: "editorial-painterly", label: "Editorial/Painterly" },
+  { id: "watercolor", label: "Watercolor" },
+  { id: "ink-sketch", label: "Ink Sketch" },
+  { id: "minimalist", label: "Minimalist" },
+  { id: "vintage", label: "Vintage" },
+];
+
 export default function Home() {
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState("birthday");
+  const [artStyle, setArtStyle] = useState("editorial-painterly");
   const [isLoading, setIsLoading] = useState(false);
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -32,7 +41,7 @@ export default function Home() {
       const response = await fetch("/api/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ description, category }),
+        body: JSON.stringify({ description, category, artStyle }),
       });
 
       if (!response.ok) {
@@ -66,6 +75,14 @@ export default function Home() {
     } catch {
       window.open(generatedImage, "_blank");
     }
+  };
+
+  const handleRegenerate = () => {
+    if (isLoading || !description.trim()) return;
+
+    // Trigger regeneration by simulating form submit
+    const fakeEvent = { preventDefault: () => {} } as React.FormEvent;
+    handleSubmit(fakeEvent);
   };
 
   const handleDownloadPDF = async () => {
@@ -206,6 +223,29 @@ export default function Home() {
                 </div>
               </div>
 
+              {/* Art Style Selection */}
+              <div className="animate-fade-in" style={{ animationDelay: "0.15s" }}>
+                <label className="block text-xs tracking-[0.2em] uppercase text-neutral-400 mb-4">
+                  Art Style
+                </label>
+                <div className="flex flex-wrap gap-2">
+                  {ART_STYLES.map((style) => (
+                    <button
+                      key={style.id}
+                      type="button"
+                      onClick={() => setArtStyle(style.id)}
+                      className={`category-btn px-4 py-2 text-xs tracking-wide border transition-all ${
+                        artStyle === style.id
+                          ? "active"
+                          : "border-neutral-200 text-neutral-500 hover:border-neutral-400"
+                      }`}
+                    >
+                      {style.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
               {/* Description Input */}
               <div className="animate-fade-in" style={{ animationDelay: "0.2s" }}>
                 <label
@@ -278,6 +318,16 @@ export default function Home() {
                     </svg>
                     PDF
                   </button>
+                  <button
+                    onClick={handleRegenerate}
+                    disabled={isLoading}
+                    className="flex items-center gap-2 text-neutral-600 hover:text-rose-500 text-sm transition-colors disabled:opacity-50"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                    </svg>
+                    Regenerate
+                  </button>
                 </div>
               </div>
             )}
@@ -302,6 +352,16 @@ export default function Home() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
                   </svg>
                   Download PDF
+                </button>
+                <button
+                  onClick={handleRegenerate}
+                  disabled={isLoading}
+                  className="flex items-center gap-2 text-neutral-600 hover:text-rose-500 text-sm transition-colors disabled:opacity-50"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                  </svg>
+                  Regenerate
                 </button>
               </div>
             )}
